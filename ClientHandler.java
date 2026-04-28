@@ -33,6 +33,31 @@ public class ClientHandler implements Runnable {
         ) {
             System.out.println("Client connected: " + socket.getInetAddress());
             
+            // ===== 3-WAY HANDSHAKE =====
+            // Paso 1: Recibir SYN del cliente
+            String synMessage = reader.readLine();
+            if (synMessage != null && synMessage.equals("SYN")) {
+                System.out.println("[HANDSHAKE] Received SYN from " + socket.getInetAddress());
+
+                // Paso 2: Enviar SYN-ACK al cliente
+                writer.println("SYN-ACK");
+                System.out.println("[HANDSHAKE] Sent SYN-ACK to " + socket.getInetAddress());
+
+                // Paso 3: Recibir ACK del cliente
+                String ackMessage = reader.readLine();
+                if (ackMessage != null && ackMessage.equals("ACK")) {
+                    System.out.println("[HANDSHAKE] Received ACK from " + socket.getInetAddress());
+                    System.out.println("[HANDSHAKE] Connection established with " + socket.getInetAddress());
+                } else {
+                    System.out.println("[HANDSHAKE] Invalid ACK from " + socket.getInetAddress() + ". Closing.");
+                    return;
+                }
+            } else {
+                System.out.println("[HANDSHAKE] Invalid SYN from " + socket.getInetAddress() + ". Closing.");
+                return;
+            }
+            // ===== HANDSHAKE COMPLETE =====
+
             String line;
 
             while ((line = reader.readLine()) != null) {

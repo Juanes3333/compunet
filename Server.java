@@ -45,7 +45,8 @@ public class Server {
                 // gestionar las solicitudes del cliente en hilos distintos
                 server.getPool().execute( // runnable 
                         new ClientHandler(server.getSocket().accept(), 
-                            server.getWarehouse(), server.getSemaphore()));
+                            server.getWarehouse(), server.getSemaphore())
+                );
             }
         } catch (Exception e) {
             System.err.println("Server error: " + e.getMessage());
